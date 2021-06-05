@@ -2,9 +2,12 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:upnp/upnp.dart';
 import 'package:web_socket_channel/io.dart';
+import 'package:wake_on_lan/wake_on_lan.dart';
 
 import 'key_codes.dart';
 
@@ -55,7 +58,7 @@ class SamsungSmartTV {
     this.services.add(service);
   }
 
-  connect({appName = 'DartSamsungSmartTVDriver'}) async {
+  connect(BuildContext context, {appName = 'SamsungSmartTVRemote'}) async {
     var completer = new Completer();
 
     if (this.isConnected) {
@@ -63,23 +66,34 @@ class SamsungSmartTV {
     }
 
     // // make sure to turn on TV in case it is turned off
-    // if (mac != null) {
-    //   await this.wol(this.mac);
+    // if (this.mac != null) {
+    //   await WakeOnLAN.from(
+    //     IPv4Address.from(this.host),
+    //     MACAddress.from(this.mac),
+    //     port: 55,
+    //   ).wake();
     // }
-
     // get device info
     info = await getDeviceInfo();
 
+    final prefs = await SharedPreferences.getInstance();
+    if (token == null) {
+      token = prefs.getString('token');
+    }
+
     // establish socket connection
     final appNameBase64 = base64.encode(utf8.encode(appName));
-    String channel = "${wsapi}channels/samsung.remote.control?name=$appNameBase64";
+    String channel =
+        "${wsapi}channels/samsung.remote.control?name=$appNameBase64";
     if (token != null) {
       channel += '&token=$token';
     }
 
     // log.info(`Connect to ${channel}`)
     // ws = IOWebSocketChannel.connect(channel);
-    ws = IOWebSocketChannel.connect(channel, badCertificateCallback: (X509Certificate cert, String host, int port) => true);
+    ws = IOWebSocketChannel.connect(channel,
+        badCertificateCallback: (X509Certificate cert, String host, int port) =>
+            true);
 
     ws.stream.listen((message) {
       // timer?.cancel();
@@ -88,11 +102,13 @@ class SamsungSmartTV {
       try {
         data = json.decode(message);
       } catch (e) {
+        prefs.remove('token');
         throw ('Could not parse TV response $message');
       }
 
       if (data["data"] != null && data["data"]["token"] != null) {
         token = data["data"]["token"];
+        prefs.setString('token', token);
       }
 
       if (data["event"] != 'ms.channel.connect') {
@@ -101,8 +117,15 @@ class SamsungSmartTV {
         // throw ('Unable to connect to TV');
       }
 
-      print('Connection successfully established');
+      // print('Connection successfully established');
       isConnected = true;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          behavior: SnackBarBehavior.floating,
+          content: Text('Connected'),
+          duration: Duration(seconds: 1),
+        ),
+      );
       completer.complete();
 
       // timer = Timer(Duration(seconds: kConnectionTimeout), () {
@@ -163,6 +186,12 @@ class SamsungSmartTV {
     final client = DeviceDiscoverer();
     final List<SamsungSmartTV> tvs = [];
 
+    await WakeOnLAN.from(
+      IPv4Address.from("192.168.0.101"),
+      MACAddress.from("FF:FF:FF:FF:FF:FF"),
+      port: 55,
+    ).wake();
+
     await client.start(ipv6: false);
 
     client.quickDiscoverClients().listen((client) async {
@@ -177,12 +206,18 @@ class SamsungSmartTV {
 
         Uri locaion = Uri.parse(client.location);
 
-        final deviceExists = tvs.firstWhere((tv) => tv.host == locaion.host, orElse: () => null);
+        final deviceExists =
+            tvs.firstWhere((tv) => tv.host == locaion.host, orElse: () => null);
 
         if (deviceExists == null) {
           print("Found ${device.friendlyName} on IP ${locaion.host}");
           final tv = SamsungSmartTV(host: locaion.host);
-          tv.addService({"location": client.location, "server": client.server, "st": client.st, "usn": client.usn});
+          tv.addService({
+            "location": client.location,
+            "server": client.server,
+            "st": client.st,
+            "usn": client.usn
+          });
           tvs.add(tv);
         }
       } catch (e, stack) {
@@ -191,7 +226,8 @@ class SamsungSmartTV {
       }
     }).onDone(() {
       if (tvs.isEmpty) {
-        completer.completeError("No Samsung TVs found. Make sure the UPNP protocol is enabled in your network.");
+        completer.completeError(
+            "No Samsung TVs found. Make sure the UPNP protocol is enabled in your network.");
       }
       completer.complete(tvs.first);
     });

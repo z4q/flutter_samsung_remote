@@ -21,6 +21,8 @@ dependencies:
     sdk: flutter
   rxdart: ^0.24.1
   http: ^0.12.0+4
+  wake_on_lan: ^1.1.1+1
+  shared_preferences: ^2.0.6
 
   web_socket_channel:
     git: https://github.com/kecson/web_socket_channel
