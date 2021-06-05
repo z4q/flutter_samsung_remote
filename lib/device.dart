@@ -2,12 +2,10 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:upnp/upnp.dart';
 import 'package:web_socket_channel/io.dart';
-import 'package:wake_on_lan/wake_on_lan.dart';
 
 import 'key_codes.dart';
 
@@ -16,25 +14,9 @@ final kKeyDelay = 200;
 final kWakeOnLanDelay = 5000;
 final kUpnpTimeout = 1000;
 
-// import wol from 'wake_on_lan'
-// import WebSocket from 'ws'
-// import request from 'request-promise'
-// import SSDP from 'node-ssdp'
-
-// import { getLogger } from 'appium-logger'
-// import { KEY_CODES } from './constants'
-
-// const log = getLogger('SamsungRemote')
-
-// const CONNECTION_TIMEOUT = 60000
-// const KEY_DELAY = 200
-// const WAKE_ON_LAN_DELAY = 5000
-// const UPNP_TIMEOUT = 1000
-
 class SamsungSmartTV {
   final List<Map<String, dynamic>> services;
   final String host;
-  final String mac;
   final String api;
   final String wsapi;
   bool isConnected = false;
@@ -43,10 +25,8 @@ class SamsungSmartTV {
   IOWebSocketChannel ws;
   Timer timer;
 
-  SamsungSmartTV({
-    this.host,
-    this.mac,
-  })  : api = "http://$host:8001/api/v2/",
+  SamsungSmartTV({this.host})
+      : api = "http://$host:8001/api/v2/",
         wsapi = "wss://$host:8002/api/v2/",
         services = [];
 
@@ -58,21 +38,13 @@ class SamsungSmartTV {
     this.services.add(service);
   }
 
-  connect(BuildContext context, {appName = 'SamsungSmartTVRemote'}) async {
+  connect(updateState, {appName = 'SamsungSmartTVRemote'}) async {
     var completer = new Completer();
 
     if (this.isConnected) {
+      updateState();
       return;
     }
-
-    // // make sure to turn on TV in case it is turned off
-    // if (this.mac != null) {
-    //   await WakeOnLAN.from(
-    //     IPv4Address.from(this.host),
-    //     MACAddress.from(this.mac),
-    //     port: 55,
-    //   ).wake();
-    // }
     // get device info
     info = await getDeviceInfo();
 
@@ -109,6 +81,8 @@ class SamsungSmartTV {
       if (data["data"] != null && data["data"]["token"] != null) {
         token = data["data"]["token"];
         prefs.setString('token', token);
+        prefs.setString('host', info.device.ip);
+        prefs.setString('mac', info.device.wifiMac);
       }
 
       if (data["event"] != 'ms.channel.connect') {
@@ -116,16 +90,11 @@ class SamsungSmartTV {
 
         // throw ('Unable to connect to TV');
       }
-
       // print('Connection successfully established');
       isConnected = true;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          behavior: SnackBarBehavior.floating,
-          content: Text('Connected'),
-          duration: Duration(seconds: 1),
-        ),
-      );
+
+      updateState();
+
       completer.complete();
 
       // timer = Timer(Duration(seconds: kConnectionTimeout), () {
@@ -157,7 +126,7 @@ class SamsungSmartTV {
       throw ('Not connected to device. Call `tv.connect()` first!');
     }
 
-    print("Send key command  ${key.toString().split('.').last}");
+    // print("Send key command  ${key.toString().split('.').last}");
     final data = json.encode({
       "method": 'ms.remote.control',
       "params": {
@@ -186,12 +155,6 @@ class SamsungSmartTV {
     final client = DeviceDiscoverer();
     final List<SamsungSmartTV> tvs = [];
 
-    await WakeOnLAN.from(
-      IPv4Address.from("192.168.0.101"),
-      MACAddress.from("FF:FF:FF:FF:FF:FF"),
-      port: 55,
-    ).wake();
-
     await client.start(ipv6: false);
 
     client.quickDiscoverClients().listen((client) async {
@@ -205,7 +168,6 @@ class SamsungSmartTV {
         final device = await client.getDevice();
 
         Uri locaion = Uri.parse(client.location);
-
         final deviceExists =
             tvs.firstWhere((tv) => tv.host == locaion.host, orElse: () => null);
 

@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:wake_on_lan/wake_on_lan.dart';
 
 import 'device.dart';
 import 'key_codes.dart';
@@ -12,6 +14,12 @@ void main() {
   SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
     statusBarColor: Colors.transparent,
+    // For Android.
+    // Use [light] for white status bar and [dark] for black status bar.
+    statusBarIconBrightness: Brightness.light,
+    // For iOS.
+    // Use [dark] for white status bar and [light] for black status bar.
+    statusBarBrightness: Brightness.dark,
   ));
   return runApp(SamgungRemoteController());
 }
@@ -48,9 +56,26 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<void> connectTV() async {
     try {
       setState(() async {
-        tv = await SamsungSmartTV.discover();
-        await tv.connect(context);
+        final prefs = await SharedPreferences.getInstance();
+        if (prefs.getString('host') != null && prefs.getString('mac') != null) {
+          await WakeOnLAN.from(
+            IPv4Address.from(prefs.getString('host')),
+            MACAddress.from(prefs.getString('mac')),
+            port: 55,
+          ).wake();
+          tv = SamsungSmartTV(host: prefs.getString('host'));
+        } else {
+          tv = await SamsungSmartTV.discover();
+        }
+        await tv.connect(() {
+          setState(() {});
+        });
       });
+
+      // setState(() async {
+      //   tv = await SamsungSmartTV.discover();
+      //   await tv.connect();
+      // });
     } catch (e) {
       print(e);
     }
@@ -82,11 +107,13 @@ class _MyHomePageState extends State<MyHomePage> {
                 //     await tv.sendKey(KEY_CODES.KEY_POWER);
                 //   },
                 // ),
-                ControllerButton(
-                  child:
-                      Icon(Icons.connected_tv, size: 30, color: Colors.white70),
-                  onPressed: connectTV,
-                ),
+                (tv == null ? false : tv.isConnected)
+                    ? SizedBox(width: 65)
+                    : ControllerButton(
+                        child: Icon(Icons.connected_tv,
+                            size: 30, color: Colors.white70),
+                        onPressed: connectTV,
+                      ),
                 // IconButton(
                 //   icon: Icon(Icons.cast, size: 30, color: Colors.white70),
                 //   onPressed: connectTV,
@@ -556,7 +583,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         height: MediaQuery.of(context).size.width / 4,
                         child: Center(
                           child: Text(
-                            "OK",
+                            "ENTER",
                             style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.bold,
@@ -571,13 +598,15 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                   Align(
                     alignment: Alignment(0, -1),
-                    child: ControllerButton(
-                      borderRadius: 10,
+                    child: MaterialButton(
+                      shape: CircleBorder(),
                       child: Container(
                         width: MediaQuery.of(context).size.width / 5,
                         height: MediaQuery.of(context).size.width / 4,
-                        child: Icon(Icons.arrow_drop_up,
-                            size: 30, color: Colors.white),
+                        child: Center(
+                          child: Icon(Icons.arrow_drop_up,
+                              size: 30, color: Colors.white),
+                        ),
                       ),
                       onPressed: () async {
                         await tv.sendKey(KEY_CODES.KEY_UP);
@@ -586,13 +615,15 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                   Align(
                     alignment: Alignment(0, 1),
-                    child: ControllerButton(
-                      borderRadius: 10,
+                    child: MaterialButton(
+                      shape: CircleBorder(),
                       child: Container(
                         width: MediaQuery.of(context).size.width / 5,
                         height: MediaQuery.of(context).size.width / 4,
-                        child: Icon(Icons.arrow_drop_down,
-                            size: 30, color: Colors.white),
+                        child: Center(
+                          child: Icon(Icons.arrow_drop_down,
+                              size: 30, color: Colors.white),
+                        ),
                       ),
                       onPressed: () async {
                         await tv.sendKey(KEY_CODES.KEY_DOWN);
@@ -601,13 +632,15 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                   Align(
                     alignment: Alignment(1, 0),
-                    child: ControllerButton(
-                      borderRadius: 10,
+                    child: MaterialButton(
+                      shape: CircleBorder(),
                       child: Container(
                         width: MediaQuery.of(context).size.width / 5,
                         height: MediaQuery.of(context).size.width / 4,
-                        child: Icon(Icons.arrow_right,
-                            size: 30, color: Colors.white),
+                        child: Center(
+                          child: Icon(Icons.arrow_right,
+                              size: 30, color: Colors.white),
+                        ),
                       ),
                       onPressed: () async {
                         await tv.sendKey(KEY_CODES.KEY_RIGHT);
@@ -616,13 +649,15 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                   Align(
                     alignment: Alignment(-1, 0),
-                    child: ControllerButton(
-                      borderRadius: 10,
+                    child: MaterialButton(
+                      shape: CircleBorder(),
                       child: Container(
                         width: MediaQuery.of(context).size.width / 5,
                         height: MediaQuery.of(context).size.width / 4,
-                        child: Icon(Icons.arrow_left,
-                            size: 30, color: Colors.white),
+                        child: Center(
+                          child: Icon(Icons.arrow_left,
+                              size: 30, color: Colors.white),
+                        ),
                       ),
                       onPressed: () async {
                         await tv.sendKey(KEY_CODES.KEY_LEFT);
