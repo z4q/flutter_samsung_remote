@@ -7,8 +7,12 @@ import 'key_codes.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-  SystemChrome.setEnabledSystemUIOverlays([]);
+  SystemChrome.setPreferredOrientations(
+      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+  SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+    statusBarColor: Colors.transparent,
+  ));
   return runApp(SamgungRemoteController());
 }
 
@@ -33,23 +37,23 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   SamsungSmartTV tv;
-  bool _keypadShown = false;
+  // bool _keypadShown = false;
 
   @override
   void initState() {
     super.initState();
+    connectTV();
   }
 
   Future<void> connectTV() async {
     try {
       setState(() async {
         tv = await SamsungSmartTV.discover();
-        await tv.connect();
+        await tv.connect(context);
       });
     } catch (e) {
       print(e);
     }
-    print("this is the token to save somewere ${tv.token}");
   }
 
   @override
@@ -60,327 +64,100 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            SizedBox(height: 25),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                IconButton(
-                  icon: Icon(Icons.cast, size: 30, color: Colors.cyan),
-                  onPressed: connectTV,
-                ),
-                IconButton(
-                  icon: Icon(Icons.dialpad, size: 30, color: _keypadShown ? Colors.blue : Colors.white70),
-                  onPressed: () {
-                    setState(() {
-                      _keypadShown = !_keypadShown;
-                    });
-                  },
-                ),
-                IconButton(
-                  icon: Icon(Icons.power_settings_new, color: Colors.red, size: 30),
+                ControllerButton(
+                  child: Icon(Icons.power_settings_new,
+                      size: 30, color: Colors.red),
                   onPressed: () async {
                     await tv.sendKey(KEY_CODES.KEY_POWER);
                   },
                 ),
+                // IconButton(
+                //   icon: Icon(Icons.power_settings_new,
+                //       color: Colors.red, size: 30),
+                //   onPressed: () async {
+                //     await tv.sendKey(KEY_CODES.KEY_POWER);
+                //   },
+                // ),
+                ControllerButton(
+                  child:
+                      Icon(Icons.connected_tv, size: 30, color: Colors.white70),
+                  onPressed: connectTV,
+                ),
+                // IconButton(
+                //   icon: Icon(Icons.cast, size: 30, color: Colors.white70),
+                //   onPressed: connectTV,
+                // ),
+                ControllerButton(
+                  child: Icon(Icons.input, size: 30, color: Colors.white70),
+                  onPressed: () async {
+                    await tv.sendKey(KEY_CODES.KEY_SOURCE);
+                  },
+                ),
+                // IconButton(
+                //   icon: Icon(Icons.dialpad,
+                //       size: 30,
+                //       color: _keypadShown ? Colors.blue : Colors.white70),
+                //   onPressed: () {
+                //     setState(() {
+                //       _keypadShown = !_keypadShown;
+                //     });
+                //   },
+                // ),
               ],
             ),
-            SizedBox(height: 50),
-            Visibility(
-              visible: _keypadShown,
-              child: Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        ControllerButton(
-                          child: Text(
-                            "1",
-                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white70),
-                          ),
-                          onPressed: () async {
-                            await tv.sendKey(KEY_CODES.KEY_1);
-                          },
-                        ),
-                        ControllerButton(
-                          child: Text(
-                            "2",
-                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white70),
-                          ),
-                          onPressed: () async {
-                            await tv.sendKey(KEY_CODES.KEY_2);
-                          },
-                        ),
-                        ControllerButton(
-                          child: Text(
-                            "3",
-                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white70),
-                          ),
-                          onPressed: () async {
-                            await tv.sendKey(KEY_CODES.KEY_3);
-                          },
-                        ),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        ControllerButton(
-                          child: Text(
-                            "4",
-                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white70),
-                          ),
-                          onPressed: () async {
-                            await tv.sendKey(KEY_CODES.KEY_4);
-                          },
-                        ),
-                        ControllerButton(
-                          child: Text(
-                            "5",
-                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white70),
-                          ),
-                          onPressed: () async {
-                            await tv.sendKey(KEY_CODES.KEY_5);
-                          },
-                        ),
-                        ControllerButton(
-                          child: Text(
-                            "6",
-                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white70),
-                          ),
-                          onPressed: () async {
-                            await tv.sendKey(KEY_CODES.KEY_6);
-                          },
-                        ),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        ControllerButton(
-                          child: Text(
-                            "7",
-                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white70),
-                          ),
-                          onPressed: () async {
-                            await tv.sendKey(KEY_CODES.KEY_7);
-                          },
-                        ),
-                        ControllerButton(
-                          child: Text(
-                            "8",
-                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white70),
-                          ),
-                          onPressed: () async {
-                            await tv.sendKey(KEY_CODES.KEY_8);
-                          },
-                        ),
-                        ControllerButton(
-                          child: Text(
-                            "9",
-                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white70),
-                          ),
-                          onPressed: () async {
-                            await tv.sendKey(KEY_CODES.KEY_9);
-                          },
-                        ),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        ControllerButton(
-                          child: Text(
-                            "Tools".toUpperCase(),
-                            style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.white70),
-                          ),
-                          onPressed: () async {
-                            await tv.sendKey(KEY_CODES.KEY_TOOLS);
-                          },
-                        ),
-                        ControllerButton(
-                          child: Text(
-                            "0",
-                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white70),
-                          ),
-                          onPressed: () async {
-                            await tv.sendKey(KEY_CODES.KEY_0);
-                          },
-                        ),
-                        ControllerButton(
-                          child: Text(
-                            "guide".toUpperCase(),
-                            style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.white70),
-                          ),
-                          onPressed: () async {
-                            await tv.sendKey(KEY_CODES.KEY_GUIDE);
-                          },
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Visibility(
-              visible: !_keypadShown,
-              child: Expanded(
-                child: Stack(
-                  children: [
-                    Align(
-                      alignment: Alignment.topLeft,
-                      child: ControllerButton(
-                        onPressed: () async {
-                          await tv.sendKey(KEY_CODES.KEY_HOME);
-                        },
-                        child: Text(
-                          "SMART",
-                          style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.white54),
-                        ),
-                      ),
-                    ),
-                    Align(
-                      alignment: Alignment.topRight,
-                      child: ControllerButton(
-                        child: Text(
-                          "INPUT",
-                          style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.white54),
-                        ),
-                        onPressed: () async {
-                          await tv.sendKey(KEY_CODES.KEY_SOURCE);
-                        },
-                      ),
-                    ),
-                    Align(
-                      alignment: Alignment.bottomLeft,
-                      child: ControllerButton(
-                        child: Text(
-                          "BACK",
-                          style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.white54),
-                        ),
-                        onPressed: () async {
-                          await tv.sendKey(KEY_CODES.KEY_RETURN);
-                        },
-                      ),
-                    ),
-                    Align(
-                      alignment: Alignment.bottomRight,
-                      child: ControllerButton(
-                        child: Text(
-                          "EXIT",
-                          style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.white54),
-                        ),
-                        onPressed: () async {
-                          await tv.sendKey(KEY_CODES.KEY_EXT41);
-                        },
-                      ),
-                    ),
-                    Align(
-                      alignment: Alignment.center,
-                      child: ControllerButton(
-                        child: Text(
-                          "OK",
-                          style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white),
-                        ),
-                        onPressed: () async {
-                          await tv.sendKey(KEY_CODES.KEY_ENTER);
-                        },
-                      ),
-                    ),
-                    Align(
-                      alignment: Alignment(0, -0.6),
-                      child: ControllerButton(
-                        borderRadius: 10,
-                        child: Icon(Icons.arrow_drop_up, size: 30, color: Colors.white),
-                        onPressed: () async {
-                          await tv.sendKey(KEY_CODES.KEY_UP);
-                        },
-                      ),
-                    ),
-                    Align(
-                      alignment: Alignment(0, 0.6),
-                      child: ControllerButton(
-                        borderRadius: 10,
-                        child: Icon(Icons.arrow_drop_down, size: 30, color: Colors.white),
-                        onPressed: () async {
-                          await tv.sendKey(KEY_CODES.KEY_DOWN);
-                        },
-                      ),
-                    ),
-                    Align(
-                      alignment: Alignment(0.6, 0),
-                      child: ControllerButton(
-                        borderRadius: 10,
-                        child: Icon(Icons.arrow_right, size: 30, color: Colors.white),
-                        onPressed: () async {
-                          await tv.sendKey(KEY_CODES.KEY_RIGHT);
-                        },
-                      ),
-                    ),
-                    Align(
-                      alignment: Alignment(-0.7, 0),
-                      child: ControllerButton(
-                        borderRadius: 10,
-                        child: Icon(Icons.arrow_left, size: 30, color: Colors.white),
-                        onPressed: () async {
-                          await tv.sendKey(KEY_CODES.KEY_LEFT);
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            SizedBox(height: 50),
+            SizedBox(height: 25),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            //   children: [
+            //     SizedBox(
+            //       width: 30,
+            //       height: 30,
+            //       child: ControllerButton(
+            //         color: Colors.red,
+            //         onPressed: () async {
+            //           await tv.sendKey(KEY_CODES.KEY_RED);
+            //         },
+            //       ),
+            //     ),
+            //     SizedBox(
+            //       width: 30,
+            //       height: 30,
+            //       child: ControllerButton(
+            //         color: Colors.green,
+            //         onPressed: () async {
+            //           await tv.sendKey(KEY_CODES.KEY_GREEN);
+            //         },
+            //       ),
+            //     ),
+            //     SizedBox(
+            //       width: 30,
+            //       height: 30,
+            //       child: ControllerButton(
+            //         color: Colors.yellow,
+            //         onPressed: () async {
+            //           await tv.sendKey(KEY_CODES.KEY_YELLOW);
+            //         },
+            //       ),
+            //     ),
+            //     SizedBox(
+            //       height: 30,
+            //       width: 30,
+            //       child: ControllerButton(
+            //         color: Colors.blue,
+            //         onPressed: () async {
+            //           await tv.sendKey(KEY_CODES.KEY_CYAN);
+            //         },
+            //       ),
+            //     ),
+            //   ],
+            // ),
+            // SizedBox(height: 50),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                SizedBox(
-                  width: 30,
-                  height: 30,
-                  child: ControllerButton(
-                    color: Colors.red,
-                    onPressed: () async {
-                      await tv.sendKey(KEY_CODES.KEY_RED);
-                    },
-                  ),
-                ),
-                SizedBox(
-                  width: 30,
-                  height: 30,
-                  child: ControllerButton(
-                    color: Colors.green,
-                    onPressed: () async {
-                      await tv.sendKey(KEY_CODES.KEY_GREEN);
-                    },
-                  ),
-                ),
-                SizedBox(
-                  width: 30,
-                  height: 30,
-                  child: ControllerButton(
-                    color: Colors.yellow,
-                    onPressed: () async {
-                      await tv.sendKey(KEY_CODES.KEY_YELLOW);
-                    },
-                  ),
-                ),
-                SizedBox(
-                  height: 30,
-                  width: 30,
-                  child: ControllerButton(
-                    color: Colors.blue,
-                    onPressed: () async {
-                      await tv.sendKey(KEY_CODES.KEY_CYAN);
-                    },
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 50),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 ControllerButton(
                   borderRadius: 15,
@@ -390,7 +167,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         height: 50,
                         minWidth: 50,
                         shape: CircleBorder(),
-                        child: Icon(Icons.keyboard_arrow_up, size: 20, color: Colors.white54),
+                        child: Icon(Icons.keyboard_arrow_up,
+                            size: 20, color: Colors.white54),
                         onPressed: () async {
                           await tv.sendKey(KEY_CODES.KEY_VOLUP);
                         },
@@ -399,7 +177,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         height: 50,
                         minWidth: 50,
                         shape: CircleBorder(),
-                        child: Icon(Icons.volume_off, size: 20, color: Colors.white70),
+                        child: Icon(Icons.volume_off,
+                            size: 20, color: Colors.white70),
                         onPressed: () async {
                           await tv.sendKey(KEY_CODES.KEY_MUTE);
                         },
@@ -408,7 +187,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         height: 50,
                         minWidth: 50,
                         shape: CircleBorder(),
-                        child: Icon(Icons.keyboard_arrow_down, size: 20, color: Colors.white54),
+                        child: Icon(Icons.keyboard_arrow_down,
+                            size: 20, color: Colors.white54),
                         onPressed: () async {
                           await tv.sendKey(KEY_CODES.KEY_VOLDOWN);
                         },
@@ -422,7 +202,41 @@ class _MyHomePageState extends State<MyHomePage> {
                       borderRadius: 15,
                       child: Text(
                         "menu".toUpperCase(),
-                        style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.white54),
+                        style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white54),
+                      ),
+                      onPressed: () async {
+                        await tv.sendKey(KEY_CODES.KEY_MENU);
+                      },
+                    ),
+                    SizedBox(height: 35),
+                    ControllerButton(
+                      borderRadius: 15,
+                      child: Text(
+                        "more".toUpperCase(),
+                        style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white54),
+                      ),
+                      onPressed: () async {
+                        await tv.sendKey(KEY_CODES.KEY_MORE);
+                      },
+                    ),
+                  ],
+                ),
+                Column(
+                  children: [
+                    ControllerButton(
+                      borderRadius: 15,
+                      child: Text(
+                        "home".toUpperCase(),
+                        style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white54),
                       ),
                       onPressed: () async {
                         await tv.sendKey(KEY_CODES.KEY_HOME);
@@ -432,11 +246,14 @@ class _MyHomePageState extends State<MyHomePage> {
                     ControllerButton(
                       borderRadius: 15,
                       child: Text(
-                        "more".toUpperCase(),
-                        style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.white54),
+                        "guide".toUpperCase(),
+                        style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white54),
                       ),
                       onPressed: () async {
-                        await tv.sendKey(KEY_CODES.KEY_MORE);
+                        await tv.sendKey(KEY_CODES.KEY_GUIDE);
                       },
                     ),
                   ],
@@ -446,23 +263,39 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: Column(
                     children: [
                       MaterialButton(
-                        height: 40,
-                        minWidth: 40,
+                        height: 50,
+                        minWidth: 50,
                         shape: CircleBorder(),
-                        child: Icon(Icons.keyboard_arrow_up, size: 20, color: Colors.white54),
+                        child: Icon(Icons.keyboard_arrow_up,
+                            size: 20, color: Colors.white54),
                         onPressed: () async {
                           await tv.sendKey(KEY_CODES.KEY_CHUP);
                         },
                       ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        child: Text('P', style: TextStyle(fontSize: 15, color: Colors.white70)),
+                      // Padding(
+                      //   padding: const EdgeInsets.symmetric(vertical: 14),
+                      //   child: Text('CH',
+                      //       style:
+                      //           TextStyle(fontSize: 15, color: Colors.white70)),
+                      // ),
+                      MaterialButton(
+                        height: 50,
+                        minWidth: 50,
+                        shape: CircleBorder(),
+                        child: Text(
+                          'CH',
+                          style: TextStyle(fontSize: 15, color: Colors.white70),
+                        ),
+                        onPressed: () async {
+                          await tv.sendKey(KEY_CODES.KEY_MAGIC_CHANNEL);
+                        },
                       ),
                       MaterialButton(
                         height: 50,
                         minWidth: 50,
                         shape: CircleBorder(),
-                        child: Icon(Icons.keyboard_arrow_down, size: 20, color: Colors.white54),
+                        child: Icon(Icons.keyboard_arrow_down,
+                            size: 20, color: Colors.white54),
                         onPressed: () async {
                           await tv.sendKey(KEY_CODES.KEY_CHDOWN);
                         },
@@ -473,33 +306,365 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
             ),
             SizedBox(height: 50),
+            // Visibility(
+            //   visible: _keypadShown,
+            //   child: Expanded(
+            //     child: Column(
+            //       crossAxisAlignment: CrossAxisAlignment.center,
+            //       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            //       children: [
+            //         Row(
+            //           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            //           children: [
+            //             ControllerButton(
+            //               child: Text(
+            //                 "1",
+            //                 style: TextStyle(
+            //                     fontSize: 14,
+            //                     fontWeight: FontWeight.bold,
+            //                     color: Colors.white70),
+            //               ),
+            //               onPressed: () async {
+            //                 await tv.sendKey(KEY_CODES.KEY_1);
+            //               },
+            //             ),
+            //             ControllerButton(
+            //               child: Text(
+            //                 "2",
+            //                 style: TextStyle(
+            //                     fontSize: 14,
+            //                     fontWeight: FontWeight.bold,
+            //                     color: Colors.white70),
+            //               ),
+            //               onPressed: () async {
+            //                 await tv.sendKey(KEY_CODES.KEY_2);
+            //               },
+            //             ),
+            //             ControllerButton(
+            //               child: Text(
+            //                 "3",
+            //                 style: TextStyle(
+            //                     fontSize: 14,
+            //                     fontWeight: FontWeight.bold,
+            //                     color: Colors.white70),
+            //               ),
+            //               onPressed: () async {
+            //                 await tv.sendKey(KEY_CODES.KEY_3);
+            //               },
+            //             ),
+            //           ],
+            //         ),
+            //         Row(
+            //           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            //           children: [
+            //             ControllerButton(
+            //               child: Text(
+            //                 "4",
+            //                 style: TextStyle(
+            //                     fontSize: 14,
+            //                     fontWeight: FontWeight.bold,
+            //                     color: Colors.white70),
+            //               ),
+            //               onPressed: () async {
+            //                 await tv.sendKey(KEY_CODES.KEY_4);
+            //               },
+            //             ),
+            //             ControllerButton(
+            //               child: Text(
+            //                 "5",
+            //                 style: TextStyle(
+            //                     fontSize: 14,
+            //                     fontWeight: FontWeight.bold,
+            //                     color: Colors.white70),
+            //               ),
+            //               onPressed: () async {
+            //                 await tv.sendKey(KEY_CODES.KEY_5);
+            //               },
+            //             ),
+            //             ControllerButton(
+            //               child: Text(
+            //                 "6",
+            //                 style: TextStyle(
+            //                     fontSize: 14,
+            //                     fontWeight: FontWeight.bold,
+            //                     color: Colors.white70),
+            //               ),
+            //               onPressed: () async {
+            //                 await tv.sendKey(KEY_CODES.KEY_6);
+            //               },
+            //             ),
+            //           ],
+            //         ),
+            //         Row(
+            //           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            //           children: [
+            //             ControllerButton(
+            //               child: Text(
+            //                 "7",
+            //                 style: TextStyle(
+            //                     fontSize: 14,
+            //                     fontWeight: FontWeight.bold,
+            //                     color: Colors.white70),
+            //               ),
+            //               onPressed: () async {
+            //                 await tv.sendKey(KEY_CODES.KEY_7);
+            //               },
+            //             ),
+            //             ControllerButton(
+            //               child: Text(
+            //                 "8",
+            //                 style: TextStyle(
+            //                     fontSize: 14,
+            //                     fontWeight: FontWeight.bold,
+            //                     color: Colors.white70),
+            //               ),
+            //               onPressed: () async {
+            //                 await tv.sendKey(KEY_CODES.KEY_8);
+            //               },
+            //             ),
+            //             ControllerButton(
+            //               child: Text(
+            //                 "9",
+            //                 style: TextStyle(
+            //                     fontSize: 14,
+            //                     fontWeight: FontWeight.bold,
+            //                     color: Colors.white70),
+            //               ),
+            //               onPressed: () async {
+            //                 await tv.sendKey(KEY_CODES.KEY_9);
+            //               },
+            //             ),
+            //           ],
+            //         ),
+            //         Row(
+            //           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            //           children: [
+            //             ControllerButton(
+            //               child: Text(
+            //                 "Tools".toUpperCase(),
+            //                 style: TextStyle(
+            //                     fontSize: 10,
+            //                     fontWeight: FontWeight.bold,
+            //                     color: Colors.white70),
+            //               ),
+            //               onPressed: () async {
+            //                 await tv.sendKey(KEY_CODES.KEY_TOOLS);
+            //               },
+            //             ),
+            //             ControllerButton(
+            //               child: Text(
+            //                 "0",
+            //                 style: TextStyle(
+            //                     fontSize: 14,
+            //                     fontWeight: FontWeight.bold,
+            //                     color: Colors.white70),
+            //               ),
+            //               onPressed: () async {
+            //                 await tv.sendKey(KEY_CODES.KEY_0);
+            //               },
+            //             ),
+            //             ControllerButton(
+            //               child: Text(
+            //                 "guide".toUpperCase(),
+            //                 style: TextStyle(
+            //                     fontSize: 10,
+            //                     fontWeight: FontWeight.bold,
+            //                     color: Colors.white70),
+            //               ),
+            //               onPressed: () async {
+            //                 await tv.sendKey(KEY_CODES.KEY_GUIDE);
+            //               },
+            //             ),
+            //           ],
+            //         ),
+            //       ],
+            //     ),
+            //   ),
+            // ),
+            // Visibility(
+            //   visible: !_keypadShown,
+            //   child: Expanded(
+            Expanded(
+              child: Stack(
+                children: [
+                  // Align(
+                  //   alignment: Alignment.topLeft,
+                  //   child: ControllerButton(
+                  //     onPressed: () async {
+                  //       await tv.sendKey(KEY_CODES.KEY_HOME);
+                  //     },
+                  //     child: Text(
+                  //       "SMART",
+                  //       style: TextStyle(
+                  //           fontSize: 11,
+                  //           fontWeight: FontWeight.bold,
+                  //           color: Colors.white54),
+                  //     ),
+                  //   ),
+                  // ),
+                  // Align(
+                  //   alignment: Alignment.topRight,
+                  //   child: ControllerButton(
+                  //     child: Text(
+                  //       "INPUT",
+                  //       style: TextStyle(
+                  //           fontSize: 11,
+                  //           fontWeight: FontWeight.bold,
+                  //           color: Colors.white54),
+                  //     ),
+                  //     onPressed: () async {
+                  //       await tv.sendKey(KEY_CODES.KEY_SOURCE);
+                  //     },
+                  //   ),
+                  // ),
+                  Align(
+                    alignment: Alignment.bottomLeft,
+                    child: ControllerButton(
+                      child: Text(
+                        "BACK",
+                        style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white54),
+                      ),
+                      onPressed: () async {
+                        await tv.sendKey(KEY_CODES.KEY_RETURN);
+                      },
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.bottomRight,
+                    child: ControllerButton(
+                      child: Text(
+                        "EXIT",
+                        style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white54),
+                      ),
+                      onPressed: () async {
+                        await tv.sendKey(KEY_CODES.KEY_EXT1);
+                      },
+                    ),
+                  ),
+
+                  Align(
+                    alignment: Alignment.center,
+                    child: MaterialButton(
+                      shape: CircleBorder(),
+                      child: Container(
+                        width: MediaQuery.of(context).size.width / 5,
+                        height: MediaQuery.of(context).size.width / 4,
+                        child: Center(
+                          child: Text(
+                            "OK",
+                            style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white),
+                          ),
+                        ),
+                      ),
+                      onPressed: () async {
+                        await tv.sendKey(KEY_CODES.KEY_ENTER);
+                      },
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment(0, -1),
+                    child: ControllerButton(
+                      borderRadius: 10,
+                      child: Container(
+                        width: MediaQuery.of(context).size.width / 5,
+                        height: MediaQuery.of(context).size.width / 4,
+                        child: Icon(Icons.arrow_drop_up,
+                            size: 30, color: Colors.white),
+                      ),
+                      onPressed: () async {
+                        await tv.sendKey(KEY_CODES.KEY_UP);
+                      },
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment(0, 1),
+                    child: ControllerButton(
+                      borderRadius: 10,
+                      child: Container(
+                        width: MediaQuery.of(context).size.width / 5,
+                        height: MediaQuery.of(context).size.width / 4,
+                        child: Icon(Icons.arrow_drop_down,
+                            size: 30, color: Colors.white),
+                      ),
+                      onPressed: () async {
+                        await tv.sendKey(KEY_CODES.KEY_DOWN);
+                      },
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment(1, 0),
+                    child: ControllerButton(
+                      borderRadius: 10,
+                      child: Container(
+                        width: MediaQuery.of(context).size.width / 5,
+                        height: MediaQuery.of(context).size.width / 4,
+                        child: Icon(Icons.arrow_right,
+                            size: 30, color: Colors.white),
+                      ),
+                      onPressed: () async {
+                        await tv.sendKey(KEY_CODES.KEY_RIGHT);
+                      },
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment(-1, 0),
+                    child: ControllerButton(
+                      borderRadius: 10,
+                      child: Container(
+                        width: MediaQuery.of(context).size.width / 5,
+                        height: MediaQuery.of(context).size.width / 4,
+                        child: Icon(Icons.arrow_left,
+                            size: 30, color: Colors.white),
+                      ),
+                      onPressed: () async {
+                        await tv.sendKey(KEY_CODES.KEY_LEFT);
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // ),
+            SizedBox(height: 50),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 ControllerButton(
-                  child: Icon(Icons.fast_rewind, size: 20, color: Colors.white54),
+                  child:
+                      Icon(Icons.fast_rewind, size: 20, color: Colors.white54),
                   onPressed: () async {
                     await tv.sendKey(KEY_CODES.KEY_REWIND);
                   },
                 ),
+                // ControllerButton(
+                //   child: Icon(Icons.fiber_manual_record,
+                //       size: 20, color: Colors.red),
+                //   onPressed: () async {
+                //     await tv.sendKey(KEY_CODES.KEY_REC);
+                //   },
+                // ),
                 ControllerButton(
-                  child: Icon(Icons.fiber_manual_record, size: 20, color: Colors.red),
-                  onPressed: () async {
-                    await tv.sendKey(KEY_CODES.KEY_REC);
-                  },
-                ),
-                ControllerButton(
-                  child: Icon(Icons.play_arrow, size: 20, color: Colors.white54),
+                  child:
+                      Icon(Icons.play_arrow, size: 20, color: Colors.white54),
                   onPressed: () async {
                     await tv.sendKey(KEY_CODES.KEY_PLAY);
                   },
                 ),
-                ControllerButton(
-                  child: Icon(Icons.stop, size: 20, color: Colors.white54),
-                  onPressed: () async {
-                    await tv.sendKey(KEY_CODES.KEY_STOP);
-                  },
-                ),
+                // ControllerButton(
+                //   child: Icon(Icons.stop, size: 20, color: Colors.white54),
+                //   onPressed: () async {
+                //     await tv.sendKey(KEY_CODES.KEY_STOP);
+                //   },
+                // ),
                 ControllerButton(
                   child: Icon(Icons.pause, size: 20, color: Colors.white54),
                   onPressed: () async {
@@ -507,13 +672,15 @@ class _MyHomePageState extends State<MyHomePage> {
                   },
                 ),
                 ControllerButton(
-                  child: Icon(Icons.fast_forward, size: 20, color: Colors.white54),
+                  child:
+                      Icon(Icons.fast_forward, size: 20, color: Colors.white54),
                   onPressed: () async {
                     await tv.sendKey(KEY_CODES.KEY_FF);
                   },
                 ),
               ],
             ),
+            SizedBox(height: 50),
           ],
         ),
       ),
@@ -526,7 +693,9 @@ class ControllerButton extends StatelessWidget {
   final VoidCallback onPressed;
   final double borderRadius;
   final Color color;
-  const ControllerButton({Key key, this.child, this.borderRadius = 30, this.color, this.onPressed}) : super(key: key);
+  const ControllerButton(
+      {Key key, this.child, this.borderRadius = 30, this.color, this.onPressed})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -557,7 +726,9 @@ class ControllerButton extends StatelessWidget {
           decoration: BoxDecoration(
             // shape: BoxShape.circle,
             borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
-            gradient: const LinearGradient(begin: Alignment.topLeft, colors: [Color(0XFF303030), Color(0XFF1a1a1a)]),
+            gradient: const LinearGradient(
+                begin: Alignment.topLeft,
+                colors: [Color(0XFF303030), Color(0XFF1a1a1a)]),
           ),
           child: MaterialButton(
             color: color,
