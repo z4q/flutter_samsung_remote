@@ -196,37 +196,37 @@ class _MyHomePageState extends State<MyHomePage> {
                     ],
                   ),
                 ),
-                Column(
-                  children: [
-                    ControllerButton(
-                      borderRadius: 15,
-                      child: Text(
-                        "menu".toUpperCase(),
-                        style: TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white54),
-                      ),
-                      onPressed: () async {
-                        await tv.sendKey(KEY_CODES.KEY_MENU);
-                      },
-                    ),
-                    SizedBox(height: 35),
-                    ControllerButton(
-                      borderRadius: 15,
-                      child: Text(
-                        "more".toUpperCase(),
-                        style: TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white54),
-                      ),
-                      onPressed: () async {
-                        await tv.sendKey(KEY_CODES.KEY_MORE);
-                      },
-                    ),
-                  ],
-                ),
+                // Column(
+                //   children: [
+                //     ControllerButton(
+                //       borderRadius: 15,
+                //       child: Text(
+                //         "menu".toUpperCase(),
+                //         style: TextStyle(
+                //             fontSize: 10,
+                //             fontWeight: FontWeight.bold,
+                //             color: Colors.white54),
+                //       ),
+                //       onPressed: () async {
+                //         await tv.sendKey(KEY_CODES.KEY_MENU);
+                //       },
+                //     ),
+                //     SizedBox(height: 35),
+                //     ControllerButton(
+                //       borderRadius: 15,
+                //       child: Text(
+                //         "info".toUpperCase(),
+                //         style: TextStyle(
+                //             fontSize: 10,
+                //             fontWeight: FontWeight.bold,
+                //             color: Colors.white54),
+                //       ),
+                //       onPressed: () async {
+                //         await tv.sendKey(KEY_CODES.KEY_INFO);
+                //       },
+                //     ),
+                //   ],
+                // ),
                 Column(
                   children: [
                     ControllerButton(
@@ -287,7 +287,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           style: TextStyle(fontSize: 15, color: Colors.white70),
                         ),
                         onPressed: () async {
-                          await tv.sendKey(KEY_CODES.KEY_MAGIC_CHANNEL);
+                          await tv.sendKey(KEY_CODES.KEY_PRECH);
                         },
                       ),
                       MaterialButton(
@@ -487,36 +487,36 @@ class _MyHomePageState extends State<MyHomePage> {
             Expanded(
               child: Stack(
                 children: [
-                  // Align(
-                  //   alignment: Alignment.topLeft,
-                  //   child: ControllerButton(
-                  //     onPressed: () async {
-                  //       await tv.sendKey(KEY_CODES.KEY_HOME);
-                  //     },
-                  //     child: Text(
-                  //       "SMART",
-                  //       style: TextStyle(
-                  //           fontSize: 11,
-                  //           fontWeight: FontWeight.bold,
-                  //           color: Colors.white54),
-                  //     ),
-                  //   ),
-                  // ),
-                  // Align(
-                  //   alignment: Alignment.topRight,
-                  //   child: ControllerButton(
-                  //     child: Text(
-                  //       "INPUT",
-                  //       style: TextStyle(
-                  //           fontSize: 11,
-                  //           fontWeight: FontWeight.bold,
-                  //           color: Colors.white54),
-                  //     ),
-                  //     onPressed: () async {
-                  //       await tv.sendKey(KEY_CODES.KEY_SOURCE);
-                  //     },
-                  //   ),
-                  // ),
+                  Align(
+                    alignment: Alignment.topLeft,
+                    child: ControllerButton(
+                      child: Text(
+                        "MENU",
+                        style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white54),
+                      ),
+                      onPressed: () async {
+                        await tv.sendKey(KEY_CODES.KEY_MENU);
+                      },
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: ControllerButton(
+                      child: Text(
+                        "INFO",
+                        style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white54),
+                      ),
+                      onPressed: () async {
+                        await tv.sendKey(KEY_CODES.KEY_INFO);
+                      },
+                    ),
+                  ),
                   Align(
                     alignment: Alignment.bottomLeft,
                     child: ControllerButton(
@@ -543,11 +543,10 @@ class _MyHomePageState extends State<MyHomePage> {
                             color: Colors.white54),
                       ),
                       onPressed: () async {
-                        await tv.sendKey(KEY_CODES.KEY_EXT1);
+                        await tv.sendKey(KEY_CODES.KEY_EXIT);
                       },
                     ),
                   ),
-
                   Align(
                     alignment: Alignment.center,
                     child: MaterialButton(
