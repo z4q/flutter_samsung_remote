@@ -52,27 +52,35 @@ class _MyHomePageState extends State<MyHomePage> {
   Offset initialOffset;
 
   void setInitialOffset(details) async {
-    initialOffset = details.localPosition;
+    if (initialOffset == null) {
+      initialOffset = details.localPosition;
+    }
   }
 
   void updateOffset(details) async {
     const double threshold = 60;
+    if (initialOffset == null) {
+      return;
+    }
     Offset tmp = details.localPosition - initialOffset;
-    // print(tmp);
     if (tmp.dx > 50) {
       initialOffset = initialOffset + Offset(threshold, 0);
-      await tv.sendKey(KEY_CODES.KEY_RIGHT);
+      tv.sendKey(KEY_CODES.KEY_RIGHT);
     } else if (tmp.dx < -50) {
       initialOffset = initialOffset + Offset(-threshold, 0);
-      await tv.sendKey(KEY_CODES.KEY_LEFT);
+      tv.sendKey(KEY_CODES.KEY_LEFT);
     }
     if (tmp.dy > 50) {
       initialOffset = initialOffset + Offset(0, threshold);
-      await tv.sendKey(KEY_CODES.KEY_DOWN);
+      tv.sendKey(KEY_CODES.KEY_DOWN);
     } else if (tmp.dy < -50) {
       initialOffset = initialOffset + Offset(0, -threshold);
-      await tv.sendKey(KEY_CODES.KEY_UP);
+      tv.sendKey(KEY_CODES.KEY_UP);
     }
+  }
+
+  void resetOffset(details) async {
+    initialOffset = null;
   }
 
   @override
@@ -99,10 +107,9 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> connectTV() async {
-    print("ctv called");
     try {
       setState(() async {
-        tv = await SamsungSmartTV.discover();
+        if (tv == null) tv = await SamsungSmartTV.discover();
         await tv.connect(() {
           setState(() {});
         });
@@ -131,13 +138,6 @@ class _MyHomePageState extends State<MyHomePage> {
                     await tv.sendKey(KEY_CODES.KEY_POWER);
                   },
                 ),
-                // IconButton(
-                //   icon: Icon(Icons.power_settings_new,
-                //       color: Colors.red, size: 30),
-                //   onPressed: () async {
-                //     await tv.sendKey(KEY_CODES.KEY_POWER);
-                //   },
-                // ),
                 (tv == null ? false : tv.isConnected)
                     ? MaterialButton(
                         minWidth: 64,
@@ -150,26 +150,12 @@ class _MyHomePageState extends State<MyHomePage> {
                             size: 30, color: Colors.white70),
                         onPressed: connectTV,
                       ),
-                // IconButton(
-                //   icon: Icon(Icons.cast, size: 30, color: Colors.white70),
-                //   onPressed: connectTV,
-                // ),
                 ControllerButton(
                   child: Icon(Icons.input, size: 30, color: Colors.white70),
                   onPressed: () async {
                     await tv.sendKey(KEY_CODES.KEY_SOURCE);
                   },
                 ),
-                // IconButton(
-                //   icon: Icon(Icons.dialpad,
-                //       size: 30,
-                //       color: _keypadShown ? Colors.blue : Colors.white70),
-                //   onPressed: () {
-                //     setState(() {
-                //       _keypadShown = !_keypadShown;
-                //     });
-                //   },
-                // ),
               ],
             ),
             SizedBox(height: 25),
@@ -259,37 +245,6 @@ class _MyHomePageState extends State<MyHomePage> {
                     ],
                   ),
                 ),
-                // Column(
-                //   children: [
-                //     ControllerButton(
-                //       borderRadius: 15,
-                //       child: Text(
-                //         "menu".toUpperCase(),
-                //         style: TextStyle(
-                //             fontSize: 10,
-                //             fontWeight: FontWeight.bold,
-                //             color: Colors.white54),
-                //       ),
-                //       onPressed: () async {
-                //         await tv.sendKey(KEY_CODES.KEY_MENU);
-                //       },
-                //     ),
-                //     SizedBox(height: 35),
-                //     ControllerButton(
-                //       borderRadius: 15,
-                //       child: Text(
-                //         "info".toUpperCase(),
-                //         style: TextStyle(
-                //             fontSize: 10,
-                //             fontWeight: FontWeight.bold,
-                //             color: Colors.white54),
-                //       ),
-                //       onPressed: () async {
-                //         await tv.sendKey(KEY_CODES.KEY_INFO);
-                //       },
-                //     ),
-                //   ],
-                // ),
                 Column(
                   children: [
                     ControllerButton(
@@ -335,12 +290,6 @@ class _MyHomePageState extends State<MyHomePage> {
                           await tv.sendKey(KEY_CODES.KEY_CHUP);
                         },
                       ),
-                      // Padding(
-                      //   padding: const EdgeInsets.symmetric(vertical: 14),
-                      //   child: Text('CH',
-                      //       style:
-                      //           TextStyle(fontSize: 15, color: Colors.white70)),
-                      // ),
                       MaterialButton(
                         height: 50,
                         minWidth: 50,
@@ -566,6 +515,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         onHorizontalDragStart: setInitialOffset,
                         onVerticalDragUpdate: updateOffset,
                         onHorizontalDragUpdate: updateOffset,
+                        onVerticalDragEnd: resetOffset,
+                        onHorizontalDragEnd: resetOffset,
                       ),
                     ),
                   ),
@@ -813,7 +764,6 @@ class ControllerButton extends StatelessWidget {
         padding: const EdgeInsets.all(2),
         child: Container(
           decoration: BoxDecoration(
-            // shape: BoxShape.circle,
             borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
             gradient: const LinearGradient(
                 begin: Alignment.topLeft,

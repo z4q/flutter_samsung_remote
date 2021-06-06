@@ -49,7 +49,7 @@ class SamsungSmartTV {
     // get device info
     // info = await getDeviceInfo();
     final prefs = await SharedPreferences.getInstance();
-    if (token == null) {
+    if (token == null && this.host == prefs.getString('host')) {
       token = prefs.getString('token');
     }
 
@@ -88,7 +88,8 @@ class SamsungSmartTV {
 
       if (data["event"] != 'ms.channel.connect') {
         print('TV responded with $data');
-
+        isConnected = false;
+        updateState();
         // throw ('Unable to connect to TV');
       }
       // print('Connection successfully established');
@@ -121,6 +122,7 @@ class SamsungSmartTV {
   disconnect() {
     // ws.sink.close(status.goingAway);
     ws.sink.close();
+    isConnected = false;
   }
 
   sendKey(KEY_CODES key) async {
