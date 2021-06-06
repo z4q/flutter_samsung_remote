@@ -6,12 +6,12 @@
 5. Custom layout
 6. Hardware volume button support (overlay permission required)
 7. Theming, transparent notification bar, white notification icons, for both iOS and Android; matching colored splash screen for Android
+8. Implemented a touchpad in place of arrows and enter
 
 # Notes
 1. The "Connect" button at center top will be hidden once it is connected.
 2. It will save the IP, Wifi MAC and token of the first connected TV. If your TV changed IP, you will need to remove app data.
 3. Hardware volume button on iOS will not work once your iOS device reached maximum or minimum. See [hardware_buttons](https://pub.dev/packages/hardware_buttons) for more information.
-
 
 # Flutter remote controller for Smart TVs models (2016 and up)
 

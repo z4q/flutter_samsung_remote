@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hardware_buttons/hardware_buttons.dart' as HardwareButtons;
 
 import 'device.dart';
@@ -50,6 +49,31 @@ class _MyHomePageState extends State<MyHomePage> {
       _volumeButtonSubscription;
   SamsungSmartTV tv;
   // bool _keypadShown = false;
+  Offset initialOffset;
+
+  void setInitialOffset(details) async {
+    initialOffset = details.localPosition;
+  }
+
+  void updateOffset(details) async {
+    const double threshold = 60;
+    Offset tmp = details.localPosition - initialOffset;
+    // print(tmp);
+    if (tmp.dx > 50) {
+      initialOffset = initialOffset + Offset(threshold, 0);
+      await tv.sendKey(KEY_CODES.KEY_RIGHT);
+    } else if (tmp.dx < -50) {
+      initialOffset = initialOffset + Offset(-threshold, 0);
+      await tv.sendKey(KEY_CODES.KEY_LEFT);
+    }
+    if (tmp.dy > 50) {
+      initialOffset = initialOffset + Offset(0, threshold);
+      await tv.sendKey(KEY_CODES.KEY_DOWN);
+    } else if (tmp.dy < -50) {
+      initialOffset = initialOffset + Offset(0, -threshold);
+      await tv.sendKey(KEY_CODES.KEY_UP);
+    }
+  }
 
   @override
   void initState() {
@@ -75,6 +99,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> connectTV() async {
+    print("ctv called");
     try {
       setState(() async {
         tv = await SamsungSmartTV.discover();
@@ -114,7 +139,12 @@ class _MyHomePageState extends State<MyHomePage> {
                 //   },
                 // ),
                 (tv == null ? false : tv.isConnected)
-                    ? SizedBox(width: 65)
+                    ? MaterialButton(
+                        minWidth: 64,
+                        shape: CircleBorder(),
+                        onPressed: connectTV,
+                        child: null,
+                      )
                     : ControllerButton(
                         child: Icon(Icons.connected_tv,
                             size: 30, color: Colors.white70),
@@ -521,6 +551,25 @@ class _MyHomePageState extends State<MyHomePage> {
               child: Stack(
                 children: [
                   Align(
+                    alignment: Alignment.center,
+                    child: Container(
+                      // just max out
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height,
+                      child: GestureDetector(
+                        child: null,
+                        onTap: () async {
+                          // enter
+                          await tv.sendKey(KEY_CODES.KEY_ENTER);
+                        },
+                        onVerticalDragStart: setInitialOffset,
+                        onHorizontalDragStart: setInitialOffset,
+                        onVerticalDragUpdate: updateOffset,
+                        onHorizontalDragUpdate: updateOffset,
+                      ),
+                    ),
+                  ),
+                  Align(
                     alignment: Alignment.topLeft,
                     child: ControllerButton(
                       child: Text(
@@ -580,96 +629,96 @@ class _MyHomePageState extends State<MyHomePage> {
                       },
                     ),
                   ),
-                  Align(
-                    alignment: Alignment.center,
-                    child: MaterialButton(
-                      shape: CircleBorder(),
-                      child: Container(
-                        width: MediaQuery.of(context).size.width / 5,
-                        height: MediaQuery.of(context).size.width / 4,
-                        child: Center(
-                          child: Text(
-                            "ENTER",
-                            style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white),
-                          ),
-                        ),
-                      ),
-                      onPressed: () async {
-                        await tv.sendKey(KEY_CODES.KEY_ENTER);
-                      },
-                    ),
-                  ),
-                  Align(
-                    alignment: Alignment(0, -1),
-                    child: MaterialButton(
-                      shape: CircleBorder(),
-                      child: Container(
-                        width: MediaQuery.of(context).size.width / 5,
-                        height: MediaQuery.of(context).size.width / 4,
-                        child: Center(
-                          child: Icon(Icons.arrow_drop_up,
-                              size: 30, color: Colors.white),
-                        ),
-                      ),
-                      onPressed: () async {
-                        await tv.sendKey(KEY_CODES.KEY_UP);
-                      },
-                    ),
-                  ),
-                  Align(
-                    alignment: Alignment(0, 1),
-                    child: MaterialButton(
-                      shape: CircleBorder(),
-                      child: Container(
-                        width: MediaQuery.of(context).size.width / 5,
-                        height: MediaQuery.of(context).size.width / 4,
-                        child: Center(
-                          child: Icon(Icons.arrow_drop_down,
-                              size: 30, color: Colors.white),
-                        ),
-                      ),
-                      onPressed: () async {
-                        await tv.sendKey(KEY_CODES.KEY_DOWN);
-                      },
-                    ),
-                  ),
-                  Align(
-                    alignment: Alignment(1, 0),
-                    child: MaterialButton(
-                      shape: CircleBorder(),
-                      child: Container(
-                        width: MediaQuery.of(context).size.width / 5,
-                        height: MediaQuery.of(context).size.width / 4,
-                        child: Center(
-                          child: Icon(Icons.arrow_right,
-                              size: 30, color: Colors.white),
-                        ),
-                      ),
-                      onPressed: () async {
-                        await tv.sendKey(KEY_CODES.KEY_RIGHT);
-                      },
-                    ),
-                  ),
-                  Align(
-                    alignment: Alignment(-1, 0),
-                    child: MaterialButton(
-                      shape: CircleBorder(),
-                      child: Container(
-                        width: MediaQuery.of(context).size.width / 5,
-                        height: MediaQuery.of(context).size.width / 4,
-                        child: Center(
-                          child: Icon(Icons.arrow_left,
-                              size: 30, color: Colors.white),
-                        ),
-                      ),
-                      onPressed: () async {
-                        await tv.sendKey(KEY_CODES.KEY_LEFT);
-                      },
-                    ),
-                  ),
+                  // Align(
+                  //   alignment: Alignment.center,
+                  //   child: MaterialButton(
+                  //     shape: CircleBorder(),
+                  //     child: Container(
+                  //       width: MediaQuery.of(context).size.width / 5,
+                  //       height: MediaQuery.of(context).size.width / 4,
+                  //       child: Center(
+                  //         child: Text(
+                  //           "ENTER",
+                  //           style: TextStyle(
+                  //               fontSize: 12,
+                  //               fontWeight: FontWeight.bold,
+                  //               color: Colors.white),
+                  //         ),
+                  //       ),
+                  //     ),
+                  //     onPressed: () async {
+                  //       await tv.sendKey(KEY_CODES.KEY_ENTER);
+                  //     },
+                  //   ),
+                  // ),
+                  // Align(
+                  //   alignment: Alignment(0, -1),
+                  //   child: MaterialButton(
+                  //     shape: CircleBorder(),
+                  //     child: Container(
+                  //       width: MediaQuery.of(context).size.width / 5,
+                  //       height: MediaQuery.of(context).size.width / 4,
+                  //       child: Center(
+                  //         child: Icon(Icons.arrow_drop_up,
+                  //             size: 30, color: Colors.white),
+                  //       ),
+                  //     ),
+                  //     onPressed: () async {
+                  //       await tv.sendKey(KEY_CODES.KEY_UP);
+                  //     },
+                  //   ),
+                  // ),
+                  // Align(
+                  //   alignment: Alignment(0, 1),
+                  //   child: MaterialButton(
+                  //     shape: CircleBorder(),
+                  //     child: Container(
+                  //       width: MediaQuery.of(context).size.width / 5,
+                  //       height: MediaQuery.of(context).size.width / 4,
+                  //       child: Center(
+                  //         child: Icon(Icons.arrow_drop_down,
+                  //             size: 30, color: Colors.white),
+                  //       ),
+                  //     ),
+                  //     onPressed: () async {
+                  //       await tv.sendKey(KEY_CODES.KEY_DOWN);
+                  //     },
+                  //   ),
+                  // ),
+                  // Align(
+                  //   alignment: Alignment(1, 0),
+                  //   child: MaterialButton(
+                  //     shape: CircleBorder(),
+                  //     child: Container(
+                  //       width: MediaQuery.of(context).size.width / 5,
+                  //       height: MediaQuery.of(context).size.width / 4,
+                  //       child: Center(
+                  //         child: Icon(Icons.arrow_right,
+                  //             size: 30, color: Colors.white),
+                  //       ),
+                  //     ),
+                  //     onPressed: () async {
+                  //       await tv.sendKey(KEY_CODES.KEY_RIGHT);
+                  //     },
+                  //   ),
+                  // ),
+                  // Align(
+                  //   alignment: Alignment(-1, 0),
+                  //   child: MaterialButton(
+                  //     shape: CircleBorder(),
+                  //     child: Container(
+                  //       width: MediaQuery.of(context).size.width / 5,
+                  //       height: MediaQuery.of(context).size.width / 4,
+                  //       child: Center(
+                  //         child: Icon(Icons.arrow_left,
+                  //             size: 30, color: Colors.white),
+                  //       ),
+                  //     ),
+                  //     onPressed: () async {
+                  //       await tv.sendKey(KEY_CODES.KEY_LEFT);
+                  //     },
+                  //   ),
+                  // ),
                 ],
               ),
             ),
