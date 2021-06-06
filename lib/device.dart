@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:upnp/upnp.dart';
+import 'package:wake_on_lan/wake_on_lan.dart';
 import 'package:web_socket_channel/io.dart';
 
 import 'key_codes.dart';
@@ -21,7 +22,7 @@ class SamsungSmartTV {
   final String wsapi;
   bool isConnected = false;
   String token;
-  dynamic info;
+  // dynamic info;
   IOWebSocketChannel ws;
   Timer timer;
 
@@ -46,8 +47,7 @@ class SamsungSmartTV {
       return;
     }
     // get device info
-    info = await getDeviceInfo();
-
+    // info = await getDeviceInfo();
     final prefs = await SharedPreferences.getInstance();
     if (token == null) {
       token = prefs.getString('token');
@@ -67,6 +67,7 @@ class SamsungSmartTV {
         badCertificateCallback: (X509Certificate cert, String host, int port) =>
             true);
 
+    final info = await getDeviceInfo();
     ws.stream.listen((message) {
       // timer?.cancel();
 
@@ -81,8 +82,8 @@ class SamsungSmartTV {
       if (data["data"] != null && data["data"]["token"] != null) {
         token = data["data"]["token"];
         prefs.setString('token', token);
-        prefs.setString('host', info.device.ip);
-        prefs.setString('mac', info.device.wifiMac);
+        prefs.setString('host', info["ip"]);
+        prefs.setString('mac', info["wifiMac"]);
       }
 
       if (data["event"] != 'ms.channel.connect') {
@@ -109,9 +110,10 @@ class SamsungSmartTV {
 
   // request TV info like udid or model name
 
-  Future<http.Response> getDeviceInfo() async {
+  Future<dynamic> getDeviceInfo() async {
     print("Get device info from $api");
-    return http.get(this.api);
+    http.Response result = await http.get(this.api);
+    return json.decode(result.body)["device"];
   }
 
   // disconnect from device
@@ -150,8 +152,19 @@ class SamsungSmartTV {
   //static method to discover Samsung Smart TVs in the network using the UPNP protocol
 
   static discover() async {
-    var completer = new Completer();
+    // WoL known TV
+    final prefs = await SharedPreferences.getInstance();
+    if (prefs.getString('host') != null && prefs.getString('mac') != null) {
+      await WakeOnLAN.from(
+        IPv4Address.from(prefs.getString('host')),
+        MACAddress.from(prefs.getString('mac')),
+        port: 55,
+      ).wake();
+      return SamsungSmartTV(host: prefs.getString('host'));
+    }
+    // discover
 
+    var completer = new Completer();
     final client = DeviceDiscoverer();
     final List<SamsungSmartTV> tvs = [];
 

@@ -1,8 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:wake_on_lan/wake_on_lan.dart';
+import 'package:hardware_buttons/hardware_buttons.dart' as HardwareButtons;
 
 import 'device.dart';
 import 'key_codes.dart';
@@ -44,6 +46,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  StreamSubscription<HardwareButtons.VolumeButtonEvent>
+      _volumeButtonSubscription;
   SamsungSmartTV tv;
   // bool _keypadShown = false;
 
@@ -51,31 +55,33 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     connectTV();
+    // connect to volumn buttons
+    _volumeButtonSubscription =
+        HardwareButtons.volumeButtonEvents.listen((event) {
+      if (tv.isConnected) {
+        if (event == HardwareButtons.VolumeButtonEvent.VOLUME_UP) {
+          tv.sendKey(KEY_CODES.KEY_VOLUP);
+        } else {
+          tv.sendKey(KEY_CODES.KEY_VOLDOWN);
+        }
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _volumeButtonSubscription?.cancel();
   }
 
   Future<void> connectTV() async {
     try {
       setState(() async {
-        final prefs = await SharedPreferences.getInstance();
-        if (prefs.getString('host') != null && prefs.getString('mac') != null) {
-          await WakeOnLAN.from(
-            IPv4Address.from(prefs.getString('host')),
-            MACAddress.from(prefs.getString('mac')),
-            port: 55,
-          ).wake();
-          tv = SamsungSmartTV(host: prefs.getString('host'));
-        } else {
-          tv = await SamsungSmartTV.discover();
-        }
+        tv = await SamsungSmartTV.discover();
         await tv.connect(() {
           setState(() {});
         });
       });
-
-      // setState(() async {
-      //   tv = await SamsungSmartTV.discover();
-      //   await tv.connect();
-      // });
     } catch (e) {
       print(e);
     }
