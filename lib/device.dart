@@ -127,7 +127,7 @@ class SamsungSmartTV {
 
   sendKey(KEY_CODES key) async {
     if (!isConnected) {
-      throw ('Not connected to device. Call `tv.connect()` first!');
+      await connect(null);
     }
 
     // print("Send key command  ${key.toString().split('.').last}");
