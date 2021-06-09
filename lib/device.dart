@@ -42,7 +42,7 @@ class SamsungSmartTV {
   connect(updateState, {appName = 'SamsungSmartTVRemote'}) async {
     var completer = new Completer();
 
-    if (this.isConnected) {
+    if (isConnected) {
       updateState();
       return;
     }
@@ -147,8 +147,10 @@ class SamsungSmartTV {
     ws.sink.add(data);
 
     // add a delay so TV has time to execute
-    Timer(Duration(seconds: kConnectionTimeout), () {
-      throw ('Unable to connect to TV: timeout');
+    Timer(Duration(seconds: kConnectionTimeout), () async {
+      isConnected = false;
+      await connect(null);
+      if (isConnected) sendKey(key);
     });
 
     return Future.delayed(Duration(milliseconds: kKeyDelay));
