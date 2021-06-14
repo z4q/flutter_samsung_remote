@@ -65,17 +65,17 @@ class _MyHomePageState extends State<MyHomePage> {
     Offset tmp = details.localPosition - initialOffset;
     if (tmp.dx > 50) {
       initialOffset = initialOffset + Offset(threshold, 0);
-      tv.sendKey(KEY_CODES.KEY_RIGHT);
+      sendKey(KEY_CODES.KEY_RIGHT);
     } else if (tmp.dx < -50) {
       initialOffset = initialOffset + Offset(-threshold, 0);
-      tv.sendKey(KEY_CODES.KEY_LEFT);
+      sendKey(KEY_CODES.KEY_LEFT);
     }
     if (tmp.dy > 50) {
       initialOffset = initialOffset + Offset(0, threshold);
-      tv.sendKey(KEY_CODES.KEY_DOWN);
+      sendKey(KEY_CODES.KEY_DOWN);
     } else if (tmp.dy < -50) {
       initialOffset = initialOffset + Offset(0, -threshold);
-      tv.sendKey(KEY_CODES.KEY_UP);
+      sendKey(KEY_CODES.KEY_UP);
     }
   }
 
@@ -92,9 +92,9 @@ class _MyHomePageState extends State<MyHomePage> {
         HardwareButtons.volumeButtonEvents.listen((event) {
       if (tv.isConnected) {
         if (event == HardwareButtons.VolumeButtonEvent.VOLUME_UP) {
-          tv.sendKey(KEY_CODES.KEY_VOLUP);
+          sendKey(KEY_CODES.KEY_VOLUP);
         } else {
-          tv.sendKey(KEY_CODES.KEY_VOLDOWN);
+          sendKey(KEY_CODES.KEY_VOLDOWN);
         }
       }
     });
@@ -104,6 +104,15 @@ class _MyHomePageState extends State<MyHomePage> {
   void dispose() {
     super.dispose();
     _volumeButtonSubscription?.cancel();
+  }
+
+  Future<void> sendKey(KEY_CODES key) async {
+    if (await tv.sendKey(key) == false) {
+      await tv.connect(() async {
+        setState(() {});
+        await tv.sendKey(key);
+      });
+    }
   }
 
   Future<void> connectTV() async {
@@ -135,7 +144,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: Icon(Icons.power_settings_new,
                       size: 30, color: Colors.red),
                   onPressed: () async {
-                    await tv.sendKey(KEY_CODES.KEY_POWER);
+                    await sendKey(KEY_CODES.KEY_POWER);
                   },
                 ),
                 (tv == null ? false : tv.isConnected)
@@ -153,7 +162,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ControllerButton(
                   child: Icon(Icons.input, size: 30, color: Colors.white70),
                   onPressed: () async {
-                    await tv.sendKey(KEY_CODES.KEY_SOURCE);
+                    await sendKey(KEY_CODES.KEY_SOURCE);
                   },
                 ),
               ],
@@ -168,7 +177,7 @@ class _MyHomePageState extends State<MyHomePage> {
             //       child: ControllerButton(
             //         color: Colors.red,
             //         onPressed: () async {
-            //           await tv.sendKey(KEY_CODES.KEY_RED);
+            //           await sendKey(KEY_CODES.KEY_RED);
             //         },
             //       ),
             //     ),
@@ -178,7 +187,7 @@ class _MyHomePageState extends State<MyHomePage> {
             //       child: ControllerButton(
             //         color: Colors.green,
             //         onPressed: () async {
-            //           await tv.sendKey(KEY_CODES.KEY_GREEN);
+            //           await sendKey(KEY_CODES.KEY_GREEN);
             //         },
             //       ),
             //     ),
@@ -188,7 +197,7 @@ class _MyHomePageState extends State<MyHomePage> {
             //       child: ControllerButton(
             //         color: Colors.yellow,
             //         onPressed: () async {
-            //           await tv.sendKey(KEY_CODES.KEY_YELLOW);
+            //           await sendKey(KEY_CODES.KEY_YELLOW);
             //         },
             //       ),
             //     ),
@@ -198,7 +207,7 @@ class _MyHomePageState extends State<MyHomePage> {
             //       child: ControllerButton(
             //         color: Colors.blue,
             //         onPressed: () async {
-            //           await tv.sendKey(KEY_CODES.KEY_CYAN);
+            //           await sendKey(KEY_CODES.KEY_CYAN);
             //         },
             //       ),
             //     ),
@@ -219,7 +228,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         child: Icon(Icons.keyboard_arrow_up,
                             size: 20, color: Colors.white54),
                         onPressed: () async {
-                          await tv.sendKey(KEY_CODES.KEY_VOLUP);
+                          await sendKey(KEY_CODES.KEY_VOLUP);
                         },
                       ),
                       MaterialButton(
@@ -229,7 +238,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         child: Icon(Icons.volume_off,
                             size: 20, color: Colors.white70),
                         onPressed: () async {
-                          await tv.sendKey(KEY_CODES.KEY_MUTE);
+                          await sendKey(KEY_CODES.KEY_MUTE);
                         },
                       ),
                       MaterialButton(
@@ -239,7 +248,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         child: Icon(Icons.keyboard_arrow_down,
                             size: 20, color: Colors.white54),
                         onPressed: () async {
-                          await tv.sendKey(KEY_CODES.KEY_VOLDOWN);
+                          await sendKey(KEY_CODES.KEY_VOLDOWN);
                         },
                       ),
                     ],
@@ -257,7 +266,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             color: Colors.white54),
                       ),
                       onPressed: () async {
-                        await tv.sendKey(KEY_CODES.KEY_HOME);
+                        await sendKey(KEY_CODES.KEY_HOME);
                       },
                     ),
                     SizedBox(height: 35),
@@ -271,7 +280,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             color: Colors.white54),
                       ),
                       onPressed: () async {
-                        await tv.sendKey(KEY_CODES.KEY_GUIDE);
+                        await sendKey(KEY_CODES.KEY_GUIDE);
                       },
                     ),
                   ],
@@ -287,7 +296,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         child: Icon(Icons.keyboard_arrow_up,
                             size: 20, color: Colors.white54),
                         onPressed: () async {
-                          await tv.sendKey(KEY_CODES.KEY_CHUP);
+                          await sendKey(KEY_CODES.KEY_CHUP);
                         },
                       ),
                       MaterialButton(
@@ -299,7 +308,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           style: TextStyle(fontSize: 15, color: Colors.white70),
                         ),
                         onPressed: () async {
-                          await tv.sendKey(KEY_CODES.KEY_PRECH);
+                          await sendKey(KEY_CODES.KEY_PRECH);
                         },
                       ),
                       MaterialButton(
@@ -309,7 +318,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         child: Icon(Icons.keyboard_arrow_down,
                             size: 20, color: Colors.white54),
                         onPressed: () async {
-                          await tv.sendKey(KEY_CODES.KEY_CHDOWN);
+                          await sendKey(KEY_CODES.KEY_CHDOWN);
                         },
                       ),
                     ],
@@ -337,7 +346,7 @@ class _MyHomePageState extends State<MyHomePage> {
             //                     color: Colors.white70),
             //               ),
             //               onPressed: () async {
-            //                 await tv.sendKey(KEY_CODES.KEY_1);
+            //                 await sendKey(KEY_CODES.KEY_1);
             //               },
             //             ),
             //             ControllerButton(
@@ -349,7 +358,7 @@ class _MyHomePageState extends State<MyHomePage> {
             //                     color: Colors.white70),
             //               ),
             //               onPressed: () async {
-            //                 await tv.sendKey(KEY_CODES.KEY_2);
+            //                 await sendKey(KEY_CODES.KEY_2);
             //               },
             //             ),
             //             ControllerButton(
@@ -361,7 +370,7 @@ class _MyHomePageState extends State<MyHomePage> {
             //                     color: Colors.white70),
             //               ),
             //               onPressed: () async {
-            //                 await tv.sendKey(KEY_CODES.KEY_3);
+            //                 await sendKey(KEY_CODES.KEY_3);
             //               },
             //             ),
             //           ],
@@ -378,7 +387,7 @@ class _MyHomePageState extends State<MyHomePage> {
             //                     color: Colors.white70),
             //               ),
             //               onPressed: () async {
-            //                 await tv.sendKey(KEY_CODES.KEY_4);
+            //                 await sendKey(KEY_CODES.KEY_4);
             //               },
             //             ),
             //             ControllerButton(
@@ -390,7 +399,7 @@ class _MyHomePageState extends State<MyHomePage> {
             //                     color: Colors.white70),
             //               ),
             //               onPressed: () async {
-            //                 await tv.sendKey(KEY_CODES.KEY_5);
+            //                 await sendKey(KEY_CODES.KEY_5);
             //               },
             //             ),
             //             ControllerButton(
@@ -402,7 +411,7 @@ class _MyHomePageState extends State<MyHomePage> {
             //                     color: Colors.white70),
             //               ),
             //               onPressed: () async {
-            //                 await tv.sendKey(KEY_CODES.KEY_6);
+            //                 await sendKey(KEY_CODES.KEY_6);
             //               },
             //             ),
             //           ],
@@ -419,7 +428,7 @@ class _MyHomePageState extends State<MyHomePage> {
             //                     color: Colors.white70),
             //               ),
             //               onPressed: () async {
-            //                 await tv.sendKey(KEY_CODES.KEY_7);
+            //                 await sendKey(KEY_CODES.KEY_7);
             //               },
             //             ),
             //             ControllerButton(
@@ -431,7 +440,7 @@ class _MyHomePageState extends State<MyHomePage> {
             //                     color: Colors.white70),
             //               ),
             //               onPressed: () async {
-            //                 await tv.sendKey(KEY_CODES.KEY_8);
+            //                 await sendKey(KEY_CODES.KEY_8);
             //               },
             //             ),
             //             ControllerButton(
@@ -443,7 +452,7 @@ class _MyHomePageState extends State<MyHomePage> {
             //                     color: Colors.white70),
             //               ),
             //               onPressed: () async {
-            //                 await tv.sendKey(KEY_CODES.KEY_9);
+            //                 await sendKey(KEY_CODES.KEY_9);
             //               },
             //             ),
             //           ],
@@ -460,7 +469,7 @@ class _MyHomePageState extends State<MyHomePage> {
             //                     color: Colors.white70),
             //               ),
             //               onPressed: () async {
-            //                 await tv.sendKey(KEY_CODES.KEY_TOOLS);
+            //                 await sendKey(KEY_CODES.KEY_TOOLS);
             //               },
             //             ),
             //             ControllerButton(
@@ -472,7 +481,7 @@ class _MyHomePageState extends State<MyHomePage> {
             //                     color: Colors.white70),
             //               ),
             //               onPressed: () async {
-            //                 await tv.sendKey(KEY_CODES.KEY_0);
+            //                 await sendKey(KEY_CODES.KEY_0);
             //               },
             //             ),
             //             ControllerButton(
@@ -484,7 +493,7 @@ class _MyHomePageState extends State<MyHomePage> {
             //                     color: Colors.white70),
             //               ),
             //               onPressed: () async {
-            //                 await tv.sendKey(KEY_CODES.KEY_GUIDE);
+            //                 await sendKey(KEY_CODES.KEY_GUIDE);
             //               },
             //             ),
             //           ],
@@ -509,7 +518,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         child: null,
                         onTap: () async {
                           // enter
-                          await tv.sendKey(KEY_CODES.KEY_ENTER);
+                          await sendKey(KEY_CODES.KEY_ENTER);
                         },
                         onVerticalDragStart: setInitialOffset,
                         onHorizontalDragStart: setInitialOffset,
@@ -531,7 +540,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             color: Colors.white54),
                       ),
                       onPressed: () async {
-                        await tv.sendKey(KEY_CODES.KEY_MENU);
+                        await sendKey(KEY_CODES.KEY_MENU);
                       },
                     ),
                   ),
@@ -546,7 +555,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             color: Colors.white54),
                       ),
                       onPressed: () async {
-                        await tv.sendKey(KEY_CODES.KEY_INFO);
+                        await sendKey(KEY_CODES.KEY_INFO);
                       },
                     ),
                   ),
@@ -561,7 +570,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             color: Colors.white54),
                       ),
                       onPressed: () async {
-                        await tv.sendKey(KEY_CODES.KEY_RETURN);
+                        await sendKey(KEY_CODES.KEY_RETURN);
                       },
                     ),
                   ),
@@ -576,7 +585,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             color: Colors.white54),
                       ),
                       onPressed: () async {
-                        await tv.sendKey(KEY_CODES.KEY_EXIT);
+                        await sendKey(KEY_CODES.KEY_EXIT);
                       },
                     ),
                   ),
@@ -598,7 +607,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   //       ),
                   //     ),
                   //     onPressed: () async {
-                  //       await tv.sendKey(KEY_CODES.KEY_ENTER);
+                  //       await sendKey(KEY_CODES.KEY_ENTER);
                   //     },
                   //   ),
                   // ),
@@ -615,7 +624,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   //       ),
                   //     ),
                   //     onPressed: () async {
-                  //       await tv.sendKey(KEY_CODES.KEY_UP);
+                  //       await sendKey(KEY_CODES.KEY_UP);
                   //     },
                   //   ),
                   // ),
@@ -632,7 +641,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   //       ),
                   //     ),
                   //     onPressed: () async {
-                  //       await tv.sendKey(KEY_CODES.KEY_DOWN);
+                  //       await sendKey(KEY_CODES.KEY_DOWN);
                   //     },
                   //   ),
                   // ),
@@ -649,7 +658,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   //       ),
                   //     ),
                   //     onPressed: () async {
-                  //       await tv.sendKey(KEY_CODES.KEY_RIGHT);
+                  //       await sendKey(KEY_CODES.KEY_RIGHT);
                   //     },
                   //   ),
                   // ),
@@ -666,7 +675,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   //       ),
                   //     ),
                   //     onPressed: () async {
-                  //       await tv.sendKey(KEY_CODES.KEY_LEFT);
+                  //       await sendKey(KEY_CODES.KEY_LEFT);
                   //     },
                   //   ),
                   // ),
@@ -682,40 +691,40 @@ class _MyHomePageState extends State<MyHomePage> {
                   child:
                       Icon(Icons.fast_rewind, size: 20, color: Colors.white54),
                   onPressed: () async {
-                    await tv.sendKey(KEY_CODES.KEY_REWIND);
+                    await sendKey(KEY_CODES.KEY_REWIND);
                   },
                 ),
                 // ControllerButton(
                 //   child: Icon(Icons.fiber_manual_record,
                 //       size: 20, color: Colors.red),
                 //   onPressed: () async {
-                //     await tv.sendKey(KEY_CODES.KEY_REC);
+                //     await sendKey(KEY_CODES.KEY_REC);
                 //   },
                 // ),
                 ControllerButton(
                   child:
                       Icon(Icons.play_arrow, size: 20, color: Colors.white54),
                   onPressed: () async {
-                    await tv.sendKey(KEY_CODES.KEY_PLAY);
+                    await sendKey(KEY_CODES.KEY_PLAY);
                   },
                 ),
                 // ControllerButton(
                 //   child: Icon(Icons.stop, size: 20, color: Colors.white54),
                 //   onPressed: () async {
-                //     await tv.sendKey(KEY_CODES.KEY_STOP);
+                //     await sendKey(KEY_CODES.KEY_STOP);
                 //   },
                 // ),
                 ControllerButton(
                   child: Icon(Icons.pause, size: 20, color: Colors.white54),
                   onPressed: () async {
-                    await tv.sendKey(KEY_CODES.KEY_PAUSE);
+                    await sendKey(KEY_CODES.KEY_PAUSE);
                   },
                 ),
                 ControllerButton(
                   child:
                       Icon(Icons.fast_forward, size: 20, color: Colors.white54),
                   onPressed: () async {
-                    await tv.sendKey(KEY_CODES.KEY_FF);
+                    await sendKey(KEY_CODES.KEY_FF);
                   },
                 ),
               ],
