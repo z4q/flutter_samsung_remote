@@ -107,7 +107,8 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<void> connectTV() async {
     try {
       setState(() async {
-        if (tv == null) tv = await SamsungSmartTV.discover();
+        tv?.disconnect();
+        tv = await SamsungSmartTV.discover();
         await tv.connect(() {
           setState(() {});
         });
