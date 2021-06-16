@@ -164,6 +164,20 @@ class SamsungSmartTV {
     if (!isConnected) {
       await connect(null);
     }
+    // // sending base 64 string, does not work for youtube
+    // final data = json.encode({
+    //   "method": 'ms.remote.control',
+    //   "params": {
+    //     "Cmd": base64.encode(utf8.encode(text)),
+    //     "TypeOfRemote": "SendInputString",
+    //     "DataOfCmd": 'base64',
+    //   }
+    // });
+    // try {
+    //   ws.sink.add(data);
+    // } catch (e) {
+    //   return;
+    // }
     List<String> commands = [
       'KEY_RETURN',
       'KEY_RETURN',
@@ -233,9 +247,9 @@ class SamsungSmartTV {
           "TypeOfRemote": 'SendRemoteKey',
         }
       });
-      if (i < 10 && i > 3)
-        await Future.delayed(const Duration(milliseconds: 600));
-      else if (commands[i] == 'KEY_ENTER')
+      if (i == 4)
+        await Future.delayed(const Duration(milliseconds: 1000));
+      else if (i < 10 && i > 4 || commands[i] == 'KEY_ENTER')
         await Future.delayed(const Duration(milliseconds: 300));
       else
         await Future.delayed(const Duration(milliseconds: 100));
