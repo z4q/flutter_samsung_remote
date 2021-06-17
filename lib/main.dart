@@ -158,52 +158,6 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
             ),
             SizedBox(height: 25),
-            // Row(
-            //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            //   children: [
-            //     SizedBox(
-            //       width: 30,
-            //       height: 30,
-            //       child: ControllerButton(
-            //         color: Colors.red,
-            //         onPressed: () async {
-            //           await tv.sendKey(KEY_CODES.KEY_RED);
-            //         },
-            //       ),
-            //     ),
-            //     SizedBox(
-            //       width: 30,
-            //       height: 30,
-            //       child: ControllerButton(
-            //         color: Colors.green,
-            //         onPressed: () async {
-            //           await tv.sendKey(KEY_CODES.KEY_GREEN);
-            //         },
-            //       ),
-            //     ),
-            //     SizedBox(
-            //       width: 30,
-            //       height: 30,
-            //       child: ControllerButton(
-            //         color: Colors.yellow,
-            //         onPressed: () async {
-            //           await tv.sendKey(KEY_CODES.KEY_YELLOW);
-            //         },
-            //       ),
-            //     ),
-            //     SizedBox(
-            //       height: 30,
-            //       width: 30,
-            //       child: ControllerButton(
-            //         color: Colors.blue,
-            //         onPressed: () async {
-            //           await tv.sendKey(KEY_CODES.KEY_CYAN);
-            //         },
-            //       ),
-            //     ),
-            //   ],
-            // ),
-            // SizedBox(height: 50),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -317,184 +271,6 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
             ),
             SizedBox(height: 50),
-            // Visibility(
-            //   visible: _keypadShown,
-            //   child: Expanded(
-            //     child: Column(
-            //       crossAxisAlignment: CrossAxisAlignment.center,
-            //       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            //       children: [
-            //         Row(
-            //           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            //           children: [
-            //             ControllerButton(
-            //               child: Text(
-            //                 "1",
-            //                 style: TextStyle(
-            //                     fontSize: 14,
-            //                     fontWeight: FontWeight.bold,
-            //                     color: Colors.white70),
-            //               ),
-            //               onPressed: () async {
-            //                 await tv.sendKey(KEY_CODES.KEY_1);
-            //               },
-            //             ),
-            //             ControllerButton(
-            //               child: Text(
-            //                 "2",
-            //                 style: TextStyle(
-            //                     fontSize: 14,
-            //                     fontWeight: FontWeight.bold,
-            //                     color: Colors.white70),
-            //               ),
-            //               onPressed: () async {
-            //                 await tv.sendKey(KEY_CODES.KEY_2);
-            //               },
-            //             ),
-            //             ControllerButton(
-            //               child: Text(
-            //                 "3",
-            //                 style: TextStyle(
-            //                     fontSize: 14,
-            //                     fontWeight: FontWeight.bold,
-            //                     color: Colors.white70),
-            //               ),
-            //               onPressed: () async {
-            //                 await tv.sendKey(KEY_CODES.KEY_3);
-            //               },
-            //             ),
-            //           ],
-            //         ),
-            //         Row(
-            //           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            //           children: [
-            //             ControllerButton(
-            //               child: Text(
-            //                 "4",
-            //                 style: TextStyle(
-            //                     fontSize: 14,
-            //                     fontWeight: FontWeight.bold,
-            //                     color: Colors.white70),
-            //               ),
-            //               onPressed: () async {
-            //                 await tv.sendKey(KEY_CODES.KEY_4);
-            //               },
-            //             ),
-            //             ControllerButton(
-            //               child: Text(
-            //                 "5",
-            //                 style: TextStyle(
-            //                     fontSize: 14,
-            //                     fontWeight: FontWeight.bold,
-            //                     color: Colors.white70),
-            //               ),
-            //               onPressed: () async {
-            //                 await tv.sendKey(KEY_CODES.KEY_5);
-            //               },
-            //             ),
-            //             ControllerButton(
-            //               child: Text(
-            //                 "6",
-            //                 style: TextStyle(
-            //                     fontSize: 14,
-            //                     fontWeight: FontWeight.bold,
-            //                     color: Colors.white70),
-            //               ),
-            //               onPressed: () async {
-            //                 await tv.sendKey(KEY_CODES.KEY_6);
-            //               },
-            //             ),
-            //           ],
-            //         ),
-            //         Row(
-            //           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            //           children: [
-            //             ControllerButton(
-            //               child: Text(
-            //                 "7",
-            //                 style: TextStyle(
-            //                     fontSize: 14,
-            //                     fontWeight: FontWeight.bold,
-            //                     color: Colors.white70),
-            //               ),
-            //               onPressed: () async {
-            //                 await tv.sendKey(KEY_CODES.KEY_7);
-            //               },
-            //             ),
-            //             ControllerButton(
-            //               child: Text(
-            //                 "8",
-            //                 style: TextStyle(
-            //                     fontSize: 14,
-            //                     fontWeight: FontWeight.bold,
-            //                     color: Colors.white70),
-            //               ),
-            //               onPressed: () async {
-            //                 await tv.sendKey(KEY_CODES.KEY_8);
-            //               },
-            //             ),
-            //             ControllerButton(
-            //               child: Text(
-            //                 "9",
-            //                 style: TextStyle(
-            //                     fontSize: 14,
-            //                     fontWeight: FontWeight.bold,
-            //                     color: Colors.white70),
-            //               ),
-            //               onPressed: () async {
-            //                 await tv.sendKey(KEY_CODES.KEY_9);
-            //               },
-            //             ),
-            //           ],
-            //         ),
-            //         Row(
-            //           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            //           children: [
-            //             ControllerButton(
-            //               child: Text(
-            //                 "Tools".toUpperCase(),
-            //                 style: TextStyle(
-            //                     fontSize: 10,
-            //                     fontWeight: FontWeight.bold,
-            //                     color: Colors.white70),
-            //               ),
-            //               onPressed: () async {
-            //                 await tv.sendKey(KEY_CODES.KEY_TOOLS);
-            //               },
-            //             ),
-            //             ControllerButton(
-            //               child: Text(
-            //                 "0",
-            //                 style: TextStyle(
-            //                     fontSize: 14,
-            //                     fontWeight: FontWeight.bold,
-            //                     color: Colors.white70),
-            //               ),
-            //               onPressed: () async {
-            //                 await tv.sendKey(KEY_CODES.KEY_0);
-            //               },
-            //             ),
-            //             ControllerButton(
-            //               child: Text(
-            //                 "guide".toUpperCase(),
-            //                 style: TextStyle(
-            //                     fontSize: 10,
-            //                     fontWeight: FontWeight.bold,
-            //                     color: Colors.white70),
-            //               ),
-            //               onPressed: () async {
-            //                 await tv.sendKey(KEY_CODES.KEY_GUIDE);
-            //               },
-            //             ),
-            //           ],
-            //         ),
-            //       ],
-            //     ),
-            //   ),
-            // ),
-            // Visibility(
-            //   visible: !_keypadShown,
-            //   child: Expanded(
             Expanded(
               child: Stack(
                 children: [
@@ -579,100 +355,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       },
                     ),
                   ),
-                  // Align(
-                  //   alignment: Alignment.center,
-                  //   child: MaterialButton(
-                  //     shape: CircleBorder(),
-                  //     child: Container(
-                  //       width: MediaQuery.of(context).size.width / 5,
-                  //       height: MediaQuery.of(context).size.width / 4,
-                  //       child: Center(
-                  //         child: Text(
-                  //           "ENTER",
-                  //           style: TextStyle(
-                  //               fontSize: 12,
-                  //               fontWeight: FontWeight.bold,
-                  //               color: Colors.white),
-                  //         ),
-                  //       ),
-                  //     ),
-                  //     onPressed: () async {
-                  //       await tv.sendKey(KEY_CODES.KEY_ENTER);
-                  //     },
-                  //   ),
-                  // ),
-                  // Align(
-                  //   alignment: Alignment(0, -1),
-                  //   child: MaterialButton(
-                  //     shape: CircleBorder(),
-                  //     child: Container(
-                  //       width: MediaQuery.of(context).size.width / 5,
-                  //       height: MediaQuery.of(context).size.width / 4,
-                  //       child: Center(
-                  //         child: Icon(Icons.arrow_drop_up,
-                  //             size: 30, color: Colors.white),
-                  //       ),
-                  //     ),
-                  //     onPressed: () async {
-                  //       await tv.sendKey(KEY_CODES.KEY_UP);
-                  //     },
-                  //   ),
-                  // ),
-                  // Align(
-                  //   alignment: Alignment(0, 1),
-                  //   child: MaterialButton(
-                  //     shape: CircleBorder(),
-                  //     child: Container(
-                  //       width: MediaQuery.of(context).size.width / 5,
-                  //       height: MediaQuery.of(context).size.width / 4,
-                  //       child: Center(
-                  //         child: Icon(Icons.arrow_drop_down,
-                  //             size: 30, color: Colors.white),
-                  //       ),
-                  //     ),
-                  //     onPressed: () async {
-                  //       await tv.sendKey(KEY_CODES.KEY_DOWN);
-                  //     },
-                  //   ),
-                  // ),
-                  // Align(
-                  //   alignment: Alignment(1, 0),
-                  //   child: MaterialButton(
-                  //     shape: CircleBorder(),
-                  //     child: Container(
-                  //       width: MediaQuery.of(context).size.width / 5,
-                  //       height: MediaQuery.of(context).size.width / 4,
-                  //       child: Center(
-                  //         child: Icon(Icons.arrow_right,
-                  //             size: 30, color: Colors.white),
-                  //       ),
-                  //     ),
-                  //     onPressed: () async {
-                  //       await tv.sendKey(KEY_CODES.KEY_RIGHT);
-                  //     },
-                  //   ),
-                  // ),
-                  // Align(
-                  //   alignment: Alignment(-1, 0),
-                  //   child: MaterialButton(
-                  //     shape: CircleBorder(),
-                  //     child: Container(
-                  //       width: MediaQuery.of(context).size.width / 5,
-                  //       height: MediaQuery.of(context).size.width / 4,
-                  //       child: Center(
-                  //         child: Icon(Icons.arrow_left,
-                  //             size: 30, color: Colors.white),
-                  //       ),
-                  //     ),
-                  //     onPressed: () async {
-                  //       await tv.sendKey(KEY_CODES.KEY_LEFT);
-                  //     },
-                  //   ),
-                  // ),
                 ],
               ),
             ),
-            // ),
             SizedBox(height: 50),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -719,13 +404,6 @@ class _MyHomePageState extends State<MyHomePage> {
                     );
                   },
                 ),
-                // ControllerButton(
-                //   child: Icon(Icons.fiber_manual_record,
-                //       size: 20, color: Colors.red),
-                //   onPressed: () async {
-                //     await tv.sendKey(KEY_CODES.KEY_REC);
-                //   },
-                // ),
                 ControllerButton(
                   child:
                       Icon(Icons.play_arrow, size: 20, color: Colors.white54),
@@ -733,12 +411,6 @@ class _MyHomePageState extends State<MyHomePage> {
                     await tv.sendKey(KEY_CODES.KEY_PLAY);
                   },
                 ),
-                // ControllerButton(
-                //   child: Icon(Icons.stop, size: 20, color: Colors.white54),
-                //   onPressed: () async {
-                //     await tv.sendKey(KEY_CODES.KEY_STOP);
-                //   },
-                // ),
                 ControllerButton(
                   child: Icon(Icons.pause, size: 20, color: Colors.white54),
                   onPressed: () async {
