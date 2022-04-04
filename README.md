@@ -4,7 +4,7 @@
 3. Automatic wake-on-lan on startup
 4. Added saving of MAC address, IP address and token
 5. Custom layout
-6. Hardware volume button support (overlay permission required)
+6. Hardware volume button support
 7. Theming, transparent notification bar, white notification icons, for both iOS and Android; matching colored splash screen for Android
 8. Implemented a touchpad in place of arrows and enter
 
