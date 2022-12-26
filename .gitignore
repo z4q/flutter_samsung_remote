@@ -62,7 +62,7 @@
 **/ios/Flutter/app.zip
 **/ios/Flutter/flutter_assets/
 **/ios/ServiceDefinitions.json
-**/ios/Runner/GeneratedPluginRegistrant.*
+**/ios/SamsungTV/GeneratedPluginRegistrant.*
 
 # Exceptions to above rules.
 !**/ios/**/default.mode1v3
@@ -74,7 +74,7 @@ ios/Flutter/Debug.xcconfig
 ios/Flutter/Release.xcconfig
 ios/Podfile
 ios/Podfile.lock
-ios/Runner.xcodeproj/project.pbxproj
-ios/Runner.xcodeproj/project.xcworkspace/contents.xcworkspacedata
-ios/Runner.xcworkspace/contents.xcworkspacedata
+ios/SamsungTV.xcodeproj/project.pbxproj
+ios/SamsungTV.xcodeproj/project.xcworkspace/contents.xcworkspacedata
+ios/SamsungTV.xcworkspace/contents.xcworkspacedata
 pubspec.lock
